@@ -15,6 +15,7 @@
 
   activateTheatreMode();
   removeMainCarousel();
+  removePinned();
   watchURL();
 })();
 
@@ -25,6 +26,7 @@ function watchURL() {
     if (currentUrl !== lastUrl) {
       lastUrl = currentUrl;
       activateTheatreMode();
+      removePinned();
       removeMainCarousel();
     }
   }).observe(document, { subtree: true, childList: true });
@@ -40,6 +42,20 @@ function removeMainCarousel() {
   } else {
     console.log("No front page carousel element found");
   }
+}
+
+function removePinned() {
+  setTimeout(() => {
+    const pinnedMessage = document.getElementsByClassName(
+      "community-highlight-stack__card community-highlight-stack__card--wide",
+    )[0];
+    if (pinnedMessage) {
+      pinnedMessage.remove();
+      console.log("Pinned removed");
+    } else {
+      console.log("Pinned not found");
+    }
+  }, 3000);
 }
 
 function activateTheatreMode() {
