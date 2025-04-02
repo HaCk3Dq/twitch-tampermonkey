@@ -10,64 +10,83 @@
 // @license      MIT
 // ==/UserScript==
 
-(function () {
+(() => {
   "use strict";
 
-  activateTheatreMode();
-  removeMainCarousel();
-  removePinned();
+  const waitForElement = (selector, timeout = 7000) => {
+    return new Promise((resolve, reject) => {
+      const element = document.querySelector(selector);
+      if (element) return resolve(element);
+
+      const observer = new MutationObserver(() => {
+        const el = document.querySelector(selector);
+        if (el) {
+          observer.disconnect();
+          resolve(el);
+        }
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+
+      setTimeout(() => {
+        observer.disconnect();
+        console.log(`Timeout waiting for element: ${selector}`);
+        reject();
+      }, timeout);
+    });
+  };
+
+  function removeMainCarousel() {
+    waitForElement('[data-a-target="front-page-carousel"]').then((el) => {
+      waitForElement('[data-test-selector="featured-item-video"] video').then(
+        (videoElement) => {
+          videoElement.pause();
+          el.remove();
+        },
+      );
+    });
+  }
+
+  function removePinned() {
+    waitForElement('button[aria-label="Hide for yourself"]').then((el) =>
+      el.click(),
+    );
+  }
+
+  function hideMutedVOD() {
+    waitForElement('button[aria-label="Dismiss muted audio notice"]').then(
+      (el) => el.click(),
+    );
+  }
+
+  function activateTheatreMode() {
+    setTimeout(() => {
+      const theatreModeButton = document.querySelector(
+        'button[aria-label="Theatre Mode (alt+t)"]',
+      );
+      if (theatreModeButton) {
+        theatreModeButton.click();
+      }
+    }, 1500);
+  }
+
+  const handlePageChange = () => {
+    activateTheatreMode();
+    removeMainCarousel();
+    removePinned();
+    hideMutedVOD();
+  };
+
+  function watchURL() {
+    let lastUrl = location.href;
+    new MutationObserver(() => {
+      const currentUrl = location.href;
+      if (currentUrl !== lastUrl) {
+        lastUrl = currentUrl;
+        handlePageChange();
+      }
+    }).observe(document, { subtree: true, childList: true });
+  }
+
+  handlePageChange();
   watchURL();
 })();
-
-function watchURL() {
-  let lastUrl = location.href;
-  new MutationObserver(() => {
-    const currentUrl = location.href;
-    if (currentUrl !== lastUrl) {
-      lastUrl = currentUrl;
-      activateTheatreMode();
-      removePinned();
-      removeMainCarousel();
-    }
-  }).observe(document, { subtree: true, childList: true });
-}
-
-function removeMainCarousel() {
-  const carouselNode = document.querySelector(
-    '[data-a-target="front-page-carousel"]',
-  );
-  if (carouselNode) {
-    carouselNode.remove();
-    console.log("Front page carousel removed");
-  } else {
-    console.log("No front page carousel element found");
-  }
-}
-
-function removePinned() {
-  setTimeout(() => {
-    const pinnedMessage = document.getElementsByClassName(
-      "community-highlight-stack__card community-highlight-stack__card--wide",
-    )[0];
-    if (pinnedMessage) {
-      pinnedMessage.remove();
-      console.log("Pinned removed");
-    } else {
-      console.log("Pinned not found");
-    }
-  }, 3000);
-}
-
-function activateTheatreMode() {
-  setTimeout(() => {
-    const theatreModeButton = document.querySelector(
-      'button[aria-label="Theatre Mode (alt+t)"]',
-    );
-    if (theatreModeButton) {
-      theatreModeButton.click();
-      console.log("Theater Mode button clicked");
-    } else {
-      console.log("Theater Mode button not found");
-    }
-  }, 1500);
-}
