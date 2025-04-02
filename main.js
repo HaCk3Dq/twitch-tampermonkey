@@ -6,6 +6,8 @@
 // @author       HaCk3Dq
 // @match        http*://*.twitch.tv/*
 // @grant        none
+// @updateURL    https://raw.githubusercontent.com/HaCk3Dq/twitch-tampermonkey/master/main.js
+// @downloadURL  https://raw.githubusercontent.com/HaCk3Dq/twitch-tampermonkey/master/main.js
 // @run-at       document-idle
 // @license      MIT
 // ==/UserScript==
