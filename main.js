@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Twitch Theatermode
 // @namespace    http://tampermonkey.net/
-// @version      1.1.2
+// @version      1.1.3
 // @description  Auto activate theater mode on Twitch + remove front-page-carousel and reapply on page change
 // @author       HaCk3Dq
 // @match        http*://*.twitch.tv/*
