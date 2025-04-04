@@ -38,14 +38,14 @@
   };
 
   function removeMainCarousel() {
-    waitForElement('[data-a-target="front-page-carousel"]').then((el) => {
-      waitForElement('[data-test-selector="featured-item-video"] video').then(
-        (videoElement) => {
-          videoElement.pause();
+    waitForElement('[data-test-selector="featured-item-video"] video').then(
+      (videoElement) => {
+        videoElement.pause();
+        waitForElement('[data-a-target="front-page-carousel"]').then((el) => {
           el.remove();
-        },
-      );
-    });
+        });
+      },
+    );
   }
 
   function removePinned() {
