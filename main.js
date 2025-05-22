@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Twitch Theatermode
 // @namespace    http://tampermonkey.net/
-// @version      1.1.3
+// @version      1.1.4
 // @description  Auto activate theater mode on Twitch + remove front-page-carousel and reapply on page change
 // @author       HaCk3Dq
 // @match        http*://*.twitch.tv/*
@@ -38,14 +38,16 @@
   };
 
   function removeMainCarousel() {
-    waitForElement('[data-test-selector="featured-item-video"] video').then(
-      (videoElement) => {
+    setTimeout(() => {
+      const videoElement = document.querySelector(
+        '[data-test-selector="featured-item-video"] video',
+      );
+      if (videoElement) {
         videoElement.pause();
-        waitForElement('[data-a-target="front-page-carousel"]').then((el) => {
-          el.remove();
-        });
-      },
-    );
+      } else {
+        console.log("video not found");
+      }
+    }, 3000);
   }
 
   function removePinned() {
